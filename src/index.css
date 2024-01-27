@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  padding-bottom: 4vh;
+  padding-bottom: 60vh;
   min-height: 100vh;
   background: linear-gradient(to left bottom, #0a0f46, #1d1559, #301a6d, #451f80, #5c2292, #7e1a91, #9c0f8c, #b70186, #cd196b, #d73c53, #d65b40, #cf7736);
   background-position: center;
@@ -12,6 +12,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media only screen and (max-width: 600px) {
+  .body {
+    padding-bottom: 20vh;
+  }
 }
 
 button {
