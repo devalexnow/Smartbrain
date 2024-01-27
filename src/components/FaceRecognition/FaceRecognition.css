@@ -4,7 +4,7 @@
     height: 50vh;
     min-height: 200px;
     border-radius: 20px;
-    }
+}
 
 @media only screen and (max-width: 1450px) {
     .faceImage {
@@ -27,5 +27,5 @@
     flex-wrap: wrap;
     justify-content: center;
     cursor: pointer;
-  }
+}
 
