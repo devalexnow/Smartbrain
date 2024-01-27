@@ -1,0 +1,22 @@
+.faceImage {
+    margin-top: 4vh;
+    width: auto;
+    height: 50vh;
+    min-height: 200px;
+    border-radius: 20px;
+    }
+
+@media only screen and (max-width: 1450px) {
+    .faceImage {
+    width: auto;
+    height: 40vh;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .faceImage {
+    width: auto;
+    height: 30vh;
+    }
+}
+

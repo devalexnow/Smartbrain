@@ -1,25 +1,121 @@
-
+import React, {Component} from 'react';
 import './App.css';
 import Particle from './components/Particles/Particle';
-import Navigation from './components/Navigation/Navigation'
-import Logo from './components/Logo/Logo'
-import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
-import Rank from './components/Rank/Rank'
+import Navigation from './components/Navigation/Navigation';
+import Logo from './components/Logo/Logo';
+import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
+import Rank from './components/Rank/Rank';
+import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 
-function App() {
-  return (
-    <div className="App">
-      
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm />
-      <Particle className= 'particles'/>
+const MODEL_ID = 'face-detection';
 
-      {/*
-      <FaceRecognition />} */}
-    </div>
-  );
+const returnClarifayRequestOptions = (imageUrl) => {
+  const PAT = '776f168ee0b7468f8e3f0d2977657931';
+  // Specify the correct user_id/app_id pairings
+  // Since you're making inferences outside your app's scope
+  const USER_ID = 'alexnowdev';
+  const APP_ID = 'face-detection-smartbrain';
+  // Change these to whatever model and image URL you want to use
+  const IMAGE_URL = imageUrl;
+
+  const raw = JSON.stringify({
+    "user_app_id": {
+        "user_id": USER_ID,
+        "app_id": APP_ID
+    },
+    "inputs": [
+        {
+            "data": {
+                "image": {
+                    "url": IMAGE_URL
+                    // "base64": IMAGE_BYTES_STRING
+                }
+            }
+        }
+    ]
+});
+
+const requestOptions = {
+  method: 'POST',
+  headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Key ' + PAT
+  },
+  body: raw
+};
+
+return requestOptions
+}
+
+
+
+class App extends Component {
+ constructor() {
+    super();
+    this.state = {
+      input: '',
+      imageUrl: '',
+      box: '',
+    }
+  }
+
+  calculateFaceLocation = (data) => {
+     
+  }
+
+  onInputChange = (event) => {
+    this.setState({input: event.target.value});
+  }
+
+  onButtonSubmit = () => {
+    this.setState({imageUrl: this.state.input});
+    fetch("https://api.clarifai.com/v2/models/" + 'face-detection' + "/outputs", returnClarifayRequestOptions(this.state.input))
+    .then(response => response.json())
+    .then(result => {
+      // console.log(result
+      //   .outputs[0].data.regions[0].region_info.bounding_box)
+
+      const regions = result.outputs[0].data.regions;
+
+        regions.forEach(region => {
+            // Accessing and rounding the bounding box values
+            const boundingBox = region.region_info.bounding_box;
+            const topRow = boundingBox.top_row.toFixed(3);
+            const leftCol = boundingBox.left_col.toFixed(3);
+            const bottomRow = boundingBox.bottom_row.toFixed(3);
+            const rightCol = boundingBox.right_col.toFixed(3);
+
+            region.data.concepts.forEach(concept => {
+                // Accessing and rounding the concept value
+                const name = concept.name;
+                const value = concept.value.toFixed(4);
+
+                console.log(`${name}: ${value} BBox: ${topRow}, ${leftCol}, ${bottomRow}, ${rightCol}`);
+                
+            });
+        });
+
+    })
+
+  .catch(error => console.log('error', error));
+}
+
+  render(){
+    return (
+      <div className="App">
+        
+        <Navigation />
+        <Logo />
+        <Rank />
+        <ImageLinkForm 
+        onInputChange={this.onInputChange} 
+        onButtonSubmit={this.onButtonSubmit}
+        />
+        <Particle className= 'particles'/>     
+        <FaceRecognition imageUrl={this.state.imageUrl} />
+      </div>
+    );
+  }
 }
 
 export default App;
